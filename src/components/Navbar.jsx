@@ -1,8 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
-import logoLongImg from '../../assets/sevenify-long.png';
+import logoLongImg from '../assets/sevenify-long.png';
 import clsx from 'clsx';
 
-export default function AppNavbar({ links }) {
+export default function Navbar({ links }) {
     const location = useLocation();
     const currentPath = location.pathname;
 
