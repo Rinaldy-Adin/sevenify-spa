@@ -12,6 +12,7 @@ import RequestJoin from '../pages/Join/RequestJoin';
 import Components from '../pages/Components/Components';
 import Albums from '../pages/Albums/Albums';
 import NewMusic from '../pages/Music/NewMusic';
+import EditMusic from '../pages/Music/EditMusic';
 
 const router = createBrowserRouter([
     {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
                     {
                         path: '/music/new',
                         element: <NewMusic />,
+                    },
+                    {
+                        path: '/music/:musicId',
+                        element: <EditMusic />,
                     },
                 ],
             },

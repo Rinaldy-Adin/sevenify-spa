@@ -2,7 +2,7 @@ import { useState } from 'react';
 import placeholderImg from '../../assets/placeholder.jpg';
 import { useForm } from 'react-hook-form';
 
-export default function NewMusic() {
+export default function EditMusic() {
     const [coverImg, setCoverImg] = useState(placeholderImg);
 
     const {
@@ -44,7 +44,7 @@ export default function NewMusic() {
 
     return (
         <div className='flex flex-col px-4 py-6 gap-6'>
-            <h1 className='text-4xl font-medium'>Add New Music</h1>
+            <h1 className='text-4xl font-medium'>Edit Music</h1>
             <form className='flex gap-4' onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex flex-col gap-6 w-[200px] lg:w-[325px]'>
                     <img
@@ -52,20 +52,33 @@ export default function NewMusic() {
                         alt='Music Cover'
                         className='w-full aspect-square rounded-[32px]'
                     />
-                    <div className='form-control w-full'>
-                        <input
-                            type='file'
-                            className='file-input file-input-bordered file-input-primary w-full max-w-xs'
-                            accept='image/*'
-                            {...register('music_cover', {
-                                onChange: handleChangeCover,
-                            })}
-                        />
-                        <label className='label pb-0'>
-                            <span className='label-text-alt'>
-                                {errors.music_cover?.message}
-                            </span>
-                        </label>
+                    <div className='flex flex-col gap-4'>
+                        <div className='form-control w-full'>
+                            <input
+                                type='file'
+                                className='file-input file-input-bordered file-input-primary w-full max-w-xs'
+                                accept='image/*'
+                                {...register('music_cover', {
+                                    onChange: handleChangeCover,
+                                })}
+                            />
+                            <label className='label pb-0'>
+                                <span className='label-text-alt'>
+                                    {errors.music_cover?.message}
+                                </span>
+                            </label>
+                        </div>
+
+                        <div className='form-control'>
+                            <label className='label cursor-pointer'>
+                                <span className='label-text'>Remove Cover</span>
+                                <input
+                                    type='checkbox'
+                                    className='checkbox checkbox-primary'
+                                    {...register('remove_cover')}
+                                />
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div className='flex flex-1 flex-col justify-between px-2'>
@@ -129,7 +142,7 @@ export default function NewMusic() {
                         type='submit'
                         className='btn btn-primary self-end text-xl px-4 py-2'
                     >
-                        Add Music
+                        Edit Music
                     </button>
                 </div>
             </form>

@@ -80,6 +80,31 @@ export default function Components() {
                     cover={placeholderImg}
                 />
             </div>
+
+            <div className='flex flex-col gap-3 w-full'>
+                <h1 className='text-3xl font-semibold'>Input</h1>
+
+                <div className='form-control w-full'>
+                    <input
+                        type='file'
+                        className='file-input file-input-bordered file-input-primary w-full max-w-xs'
+                        accept='image/*'
+                    />
+                    <label className='label pb-0'>
+                        <span className='label-text-alt'>Error message</span>
+                    </label>
+                </div>
+
+                <div className='form-control'>
+                    <label className='label cursor-pointer'>
+                        <span className='label-text'>Remember me</span>
+                        <input
+                            type='checkbox'
+                            className='checkbox checkbox-primary'
+                        />
+                    </label>
+                </div>
+            </div>
         </div>
     );
 }
