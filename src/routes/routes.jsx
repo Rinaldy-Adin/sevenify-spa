@@ -13,6 +13,9 @@ import Components from '../pages/Components/Components';
 import Albums from '../pages/Albums/Albums';
 import NewMusic from '../pages/Music/NewMusic';
 import EditMusic from '../pages/Music/EditMusic';
+import Followers from '../pages/Followers/Followers';
+import Admin from '../pages/Admin/Admin';
+import AdminLayout from '../pages/layouts/AdminLayout';
 
 const router = createBrowserRouter([
     {
@@ -45,6 +48,10 @@ const router = createBrowserRouter([
                 element: <Albums />,
             },
             {
+                path: '/followers',
+                element: <Followers />,
+            },
+            {
                 path: '/components',
                 element: <Components />,
             },
@@ -67,6 +74,16 @@ const router = createBrowserRouter([
             {
                 path: '/join',
                 element: <RequestJoin />,
+            },
+        ],
+    },
+    {
+        path: '/',
+        element: <AdminLayout />,
+        children: [
+            {
+                path: '/admin',
+                element: <Admin />,
             },
         ],
     },

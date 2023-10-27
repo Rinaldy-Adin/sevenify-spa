@@ -1,21 +1,13 @@
 import Navbar from '../../components/Navbar';
 import { Outlet } from 'react-router-dom';
 
-export default function AppLayout() {
+export default function AdminLayout() {
     const navLinks = [
         {
-            url: "/music",
-            text: "Premium Music"
+            url: '/admin',
+            text: 'Admin',
         },
-        {
-            url: "/albums",
-            text: "Premium Albums"
-        },
-        {
-            url: "/followers",
-            text: "Followers"
-        },
-    ]
+    ];
 
     return (
         <div className='w-full min-h-screen bg-gray-300 flex flex-col items-center'>
