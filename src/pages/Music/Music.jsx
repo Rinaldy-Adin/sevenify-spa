@@ -51,6 +51,12 @@ export default function Music() {
         );
     };
 
+    const handleDelete = (musicId) => {
+        setMyMusic(
+            [...myMusic].filter(({music_id}) => music_id != musicId)
+        );
+    }
+
     return (
         <div className='w-full flex flex-col px-4 py-6 gap-6'>
             <div className='w-full flex justify-between'>
@@ -69,6 +75,7 @@ export default function Music() {
                                 onPlayMusic={() => {}}
                                 onTogglePremium={handleTogglePremium}
                                 cover={cover}
+                                onDelete={handleDelete}
                             />
                         );
                     }

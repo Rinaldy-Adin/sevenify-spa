@@ -51,6 +51,12 @@ export default function Albums() {
         );
     };
 
+    const handleDelete = (albumId) => {
+        setMyAlbums(
+            [...myAlbums].filter(({album_id}) => album_id != albumId)
+        );
+    }
+
     return (
         <div className='w-full flex flex-col px-4 py-6 gap-6'>
             <div className='w-full flex justify-between'>
@@ -68,6 +74,7 @@ export default function Albums() {
                                 albumName={album_name}
                                 onTogglePremium={handleTogglePremium}
                                 cover={cover}
+                                onDelete={handleDelete}
                             />
                         );
                     }
