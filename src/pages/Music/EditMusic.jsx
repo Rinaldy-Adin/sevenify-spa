@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import placeholderImg from '../../assets/placeholder.jpg';
 import { useForm } from 'react-hook-form';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 export default function EditMusic() {
     const [coverImg, setCoverImg] = useState(placeholderImg);
+    const [onModalConfirm, setOnModalConfirm] = useState(null);
 
     const {
         register,
@@ -14,7 +16,15 @@ export default function EditMusic() {
     } = useForm();
 
     const onSubmit = (data) => {
-        console.log(data);
+        const submit = () => {
+            console.log(data);
+        };
+
+        setOnModalConfirm({
+            title: 'Confirm Add',
+            message: 'Are you sure you want to add this music',
+            callback: submit,
+        });
     };
 
     const handleChangeCover = (e) => {
@@ -43,8 +53,21 @@ export default function EditMusic() {
         }
     };
 
+    useEffect(() => {
+        if (onModalConfirm != null) {
+            document.getElementById('my_modal').showModal();
+        }
+    }, [onModalConfirm]);
+
     return (
         <div className='flex flex-col px-4 py-6 gap-6'>
+            <ConfirmationModal
+                modalId='my_modal'
+                title={onModalConfirm?.title}
+                message={onModalConfirm?.message}
+                onConfirm={onModalConfirm?.callback}
+                onCancel={() => {}}
+            />
             <h1 className='text-4xl font-medium'>Edit Music</h1>
             <form className='flex gap-4' onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex flex-col gap-6 w-[200px] lg:w-[325px]'>

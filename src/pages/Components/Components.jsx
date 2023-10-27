@@ -1,5 +1,6 @@
 import MyMusicItem from '../../components/MyMusicItem';
 import placeholderImg from '../../assets/placeholder.jpg';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 export default function Components() {
     return (
@@ -103,6 +104,32 @@ export default function Components() {
                             className='checkbox checkbox-primary'
                         />
                     </label>
+                </div>
+            </div>
+
+            <div className='flex flex-col gap-3 w-full'>
+                <h1 className='text-3xl font-semibold'>Modals</h1>
+
+                <div>
+                    <button
+                        className='btn btn-primary'
+                        onClick={() =>
+                            document.getElementById('my_modal').showModal()
+                        }
+                    >
+                        Open Confirmation Modal
+                    </button>
+                    <ConfirmationModal
+                        modalId='my_modal'
+                        title='Confirm action'
+                        message='Are you sure you want to do'
+                        onConfirm={() => {
+                            console.log('confirmed');
+                        }}
+                        onCancel={() => {
+                            console.log('canceled');
+                        }}
+                    />
                 </div>
             </div>
         </div>

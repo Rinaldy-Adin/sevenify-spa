@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import placeholderImg from '../../assets/placeholder.jpg';
 import { useForm } from 'react-hook-form';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 export default function NewMusic() {
     const [coverImg, setCoverImg] = useState(placeholderImg);
+    const [onModalConfirm, setOnModalConfirm] = useState(null);
 
     const {
         register,
@@ -14,7 +16,15 @@ export default function NewMusic() {
     } = useForm();
 
     const onSubmit = (data) => {
-        console.log(data);
+        const submit = () => {
+            console.log(data);
+        };
+
+        setOnModalConfirm({
+            title: 'Confirm Add',
+            message: 'Are you sure you want to add this music',
+            callback: submit,
+        });
     };
 
     const handleChangeCover = (e) => {
@@ -52,10 +62,23 @@ export default function NewMusic() {
                 message: 'File not an audio file',
             });
         }
-    }
+    };
+
+    useEffect(() => {
+        if (onModalConfirm != null) {
+            document.getElementById('my_modal').showModal();
+        }
+    }, [onModalConfirm]);
 
     return (
         <div className='flex flex-col px-4 py-6 gap-6'>
+            <ConfirmationModal
+                modalId='my_modal'
+                title={onModalConfirm?.title}
+                message={onModalConfirm?.message}
+                onConfirm={onModalConfirm?.callback}
+                onCancel={() => {}}
+            />
             <h1 className='text-4xl font-medium'>Add New Music</h1>
             <form className='flex gap-4' onSubmit={handleSubmit(onSubmit)}>
                 <div className='flex flex-col gap-6 w-[200px] lg:w-[325px]'>
@@ -142,7 +165,9 @@ export default function NewMusic() {
 
                         <div className='form-control w-full'>
                             <label className='label'>
-                                <span className='label-text'>Music Audio File</span>
+                                <span className='label-text'>
+                                    Music Audio File
+                                </span>
                             </label>
                             <input
                                 type='file'
@@ -150,6 +175,7 @@ export default function NewMusic() {
                                 accept='audio/*'
                                 {...register('music_file', {
                                     onChange: handleChangeAudio,
+                                    required: "Audio file required"
                                 })}
                             />
                             <label className='label pb-0'>
