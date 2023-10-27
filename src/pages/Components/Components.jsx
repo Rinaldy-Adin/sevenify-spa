@@ -42,18 +42,43 @@ export default function Components() {
                         className='input input-bordered w-full'
                     />
                     <label className='label'>
-                        <span className='label-text-alt'>
-                            With Error Text
-                        </span>
+                        <span className='label-text-alt'>With Error Text</span>
+                    </label>
+                </div>
+
+                <div className='form-control'>
+                    <label className='label'>
+                        <span className='label-text'>Your bio</span>
+                    </label>
+                    <textarea
+                        className='textarea textarea-bordered h-24'
+                        placeholder='Bio'
+                    ></textarea>
+                    <label className='label'>
+                        <span className='label-text-alt'>Error message</span>
                     </label>
                 </div>
             </div>
-            
+
             <div className='flex flex-col gap-3 w-full'>
                 <h1 className='text-3xl font-semibold'>List Items</h1>
-                
-                <MyMusicItem musicId={1} isPremium={true} musicName={'Music Name'} onPlayMusic={() => {}} onTogglePremium={() => {}} cover={placeholderImg} />
-                <MyMusicItem musicId={2} isPremium={false} musicName={'Music Name'} onPlayMusic={() => {}} onTogglePremium={() => {}} cover={placeholderImg} />
+
+                <MyMusicItem
+                    musicId={1}
+                    isPremium={true}
+                    musicName={'Music Name'}
+                    onPlayMusic={() => {}}
+                    onTogglePremium={() => {}}
+                    cover={placeholderImg}
+                />
+                <MyMusicItem
+                    musicId={2}
+                    isPremium={false}
+                    musicName={'Music Name'}
+                    onPlayMusic={() => {}}
+                    onTogglePremium={() => {}}
+                    cover={placeholderImg}
+                />
             </div>
         </div>
     );

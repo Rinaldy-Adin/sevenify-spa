@@ -1,5 +1,9 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
-import AppLayout from '../pages/layouts/AppLayout'
+import {
+    createBrowserRouter,
+    Navigate,
+    RouterProvider,
+} from 'react-router-dom';
+import AppLayout from '../pages/layouts/AppLayout';
 import Music from '../pages/Music/Music';
 import Login from '../pages/Login/Login';
 import LoginLayout from '../pages/layouts/LoginLayout';
@@ -7,6 +11,7 @@ import UnacceptedLayout from '../pages/layouts/UnacceptedLayout';
 import RequestJoin from '../pages/Join/RequestJoin';
 import Components from '../pages/Components/Components';
 import Albums from '../pages/Albums/Albums';
+import NewMusic from '../pages/Music/NewMusic';
 
 const router = createBrowserRouter([
     {
@@ -15,21 +20,30 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Navigate to='/music' />
+                element: <Navigate to='/music' />,
             },
             {
                 path: '/music',
-                element: <Music />
+                children: [
+                    {
+                        index: true,
+                        element: <Music />,
+                    },
+                    {
+                        path: '/music/new',
+                        element: <NewMusic />,
+                    },
+                ],
             },
             {
                 path: '/albums',
-                element: <Albums />
+                element: <Albums />,
             },
             {
                 path: '/components',
-                element: <Components />
-            }
-        ]
+                element: <Components />,
+            },
+        ],
     },
     {
         path: '/',
@@ -37,9 +51,9 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/login',
-                element: <Login />
-            }
-        ]
+                element: <Login />,
+            },
+        ],
     },
     {
         path: '/',
@@ -47,10 +61,10 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/join',
-                element: <RequestJoin />
-            }
-        ]
-    }
+                element: <RequestJoin />,
+            },
+        ],
+    },
 ]);
 
 const Routes = () => <RouterProvider router={router} />;

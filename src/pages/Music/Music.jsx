@@ -1,6 +1,7 @@
 import placeholderImg from '../../assets/placeholder.jpg';
 import { useState, useEffect } from 'react';
 import MyMusicItem from '../../components/MyMusicItem';
+import { Link } from 'react-router-dom';
 
 const dummyMyMusic = [
     {
@@ -61,7 +62,7 @@ export default function Music() {
         <div className='w-full flex flex-col px-4 py-6 gap-6'>
             <div className='w-full flex justify-between'>
                 <h1 className='font-medium text-4xl'>My Music</h1>
-                <div></div>
+                <Link to={'new'}><button className='btn btn-primary text-lg font-bold px-3 py-2'>Add New Music</button></Link>
             </div>
             <div className='flex flex-col gap-4'>
                 {myMusic.map(

@@ -4,18 +4,24 @@
 @tailwind components;
 @tailwind utilities;
 
-.btn {
-    @apply text-white font-bold text-base min-h-0 h-auto px-3 py-1 rounded border-2 border-black;
-}
-
-.label-text {
-    @apply text-base font-semibold text-[#333333];
-}
-
-.input {
-    @apply px-3 py-2 h-auto text-sm;
-}
-
-.label-text-alt {
-    @apply text-error font-medium;
+@layer components {
+    .btn {
+        @apply text-white font-bold text-base min-h-0 h-auto px-3 py-1 rounded border-2 border-black;
+    }
+    
+    .label-text {
+        @apply text-base font-semibold text-[#333333];
+    }
+    
+    .input {
+        @apply px-3 py-2 h-auto text-sm;
+    }
+    
+    .textarea {
+        @apply px-3 py-2 h-auto text-sm;
+    }
+    
+    .label-text-alt {
+        @apply text-error font-medium;
+    }
 }
