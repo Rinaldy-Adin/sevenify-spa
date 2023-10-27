@@ -30,9 +30,10 @@ export default function NewMusic() {
                 reader.readAsDataURL(file);
                 clearErrors('music_cover');
             } else {
+                e.target.value = '';
                 setCoverImg(placeholderImg);
                 setError('music_cover', {
-                    type: 'custom',
+                    type: 'filetype',
                     message: 'File not an image',
                 });
             }
@@ -41,6 +42,17 @@ export default function NewMusic() {
             clearErrors('music_cover');
         }
     };
+
+    const handleChangeAudio = (e) => {
+        const file = e.target.files[0];
+        if (file && !file.type.startsWith('audio/')) {
+            e.target.value = '';
+            setError('music_file', {
+                type: 'filetype',
+                message: 'File not an audio file',
+            });
+        }
+    }
 
     return (
         <div className='flex flex-col px-4 py-6 gap-6'>
@@ -53,6 +65,9 @@ export default function NewMusic() {
                         className='w-full aspect-square rounded-[32px]'
                     />
                     <div className='form-control w-full'>
+                        <label className='label'>
+                            <span className='label-text'>Music Cover File</span>
+                        </label>
                         <input
                             type='file'
                             className='file-input file-input-bordered file-input-primary w-full max-w-xs'
@@ -123,6 +138,25 @@ export default function NewMusic() {
                                 placeholder='Enter your description'
                                 {...register('music_description')}
                             />
+                        </div>
+
+                        <div className='form-control w-full'>
+                            <label className='label'>
+                                <span className='label-text'>Music Audio File</span>
+                            </label>
+                            <input
+                                type='file'
+                                className='file-input file-input-bordered file-input-primary w-full max-w-xs'
+                                accept='audio/*'
+                                {...register('music_file', {
+                                    onChange: handleChangeAudio,
+                                })}
+                            />
+                            <label className='label pb-0'>
+                                <span className='label-text-alt'>
+                                    {errors.music_file?.message}
+                                </span>
+                            </label>
                         </div>
                     </div>
                     <button

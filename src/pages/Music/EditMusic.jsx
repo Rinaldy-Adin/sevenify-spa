@@ -30,9 +30,10 @@ export default function EditMusic() {
                 reader.readAsDataURL(file);
                 clearErrors('music_cover');
             } else {
+                e.target.value = '';
                 setCoverImg(placeholderImg);
                 setError('music_cover', {
-                    type: 'custom',
+                    type: 'filetype',
                     message: 'File not an image',
                 });
             }
@@ -54,6 +55,11 @@ export default function EditMusic() {
                     />
                     <div className='flex flex-col gap-4'>
                         <div className='form-control w-full'>
+                            <label className='label'>
+                                <span className='label-text'>
+                                    Music Cover File
+                                </span>
+                            </label>
                             <input
                                 type='file'
                                 className='file-input file-input-bordered file-input-primary w-full max-w-xs'
