@@ -6,6 +6,10 @@ export default function AppLayout() {
         {
             url: "/music",
             text: "Premium Music"
+        },
+        {
+            url: "/albums",
+            text: "Premium Albums"
         }
     ]
 

@@ -6,6 +6,7 @@ import LoginLayout from '../pages/layouts/LoginLayout';
 import UnacceptedLayout from '../pages/layouts/UnacceptedLayout';
 import RequestJoin from '../pages/Join/RequestJoin';
 import Components from '../pages/Components/Components';
+import Albums from '../pages/Albums/Albums';
 
 const router = createBrowserRouter([
     {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
             {
                 path: '/music',
                 element: <Music />
+            },
+            {
+                path: '/albums',
+                element: <Albums />
             },
             {
                 path: '/components',

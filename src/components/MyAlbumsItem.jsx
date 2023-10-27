@@ -1,27 +1,19 @@
 import {MdEdit, MdDelete} from 'react-icons/md';
-import playButtonImg from '../assets/play-button.png';
 import clsx from 'clsx';
 
-export default function MyMusicItem({musicName, musicId, isPremium, cover, onPlayMusic, onTogglePremium}) {
+export default function MyAlbumsItem({albumName, albumId, isPremium, cover, onTogglePremium}) {
     const handleToggle = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        onTogglePremium(musicId);
-    }
-
-    const handlePlay = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onPlayMusic(musicId);
+        onTogglePremium(albumId);
     }
 
     return (
         <div className='w-full flex justify-between px-4 py-3 h-20'>
             <div className='flex gap-[10px] items-center'>
-                <img src={playButtonImg} onClick={handlePlay} alt='play button' className='cursor-pointer w-8 h-8' />
                 <img src={cover} alt='music cover' className='h-full cursor-router aspect-square rounded-lg'/>
                 <p className='text-xl'>
-                    <span>{musicName}</span>
+                    <span>{albumName}</span>
                     <span className={clsx(isPremium ? 'text-primary' : 'text-gray-400')}> - {isPremium ? 'Premium' : 'Public'}</span>
                 </p>
             </div>
