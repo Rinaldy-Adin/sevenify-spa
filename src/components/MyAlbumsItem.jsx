@@ -43,7 +43,7 @@ export default function MyAlbumsItem({
                 </p>
             </div>
             <div className='flex px-3 py-1 gap-8 items-center'>
-                <Link to={`/album/${albumId}`}>
+                <Link to={`/albums/${albumId}`}>
                     <MdEdit
                         size={28}
                         className='cursor-pointer text-gray-500'

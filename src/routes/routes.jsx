@@ -16,6 +16,8 @@ import EditMusic from '../pages/Music/EditMusic';
 import Followers from '../pages/Followers/Followers';
 import Admin from '../pages/Admin/Admin';
 import AdminLayout from '../pages/layouts/AdminLayout';
+import NewAlbum from '../pages/Albums/NewAlbum';
+import EditAlbum from '../pages/Albums/EditAlbum';
 
 const router = createBrowserRouter([
     {
@@ -45,7 +47,20 @@ const router = createBrowserRouter([
             },
             {
                 path: '/albums',
-                element: <Albums />,
+                children: [
+                    {
+                        index: true,
+                        element: <Albums />,
+                    },
+                    {
+                        path: '/albums/new',
+                        element: <NewAlbum />,
+                    },
+                    {
+                        path: '/albums/:albumId',
+                        element: <EditAlbum />,
+                    },
+                ],
             },
             {
                 path: '/followers',

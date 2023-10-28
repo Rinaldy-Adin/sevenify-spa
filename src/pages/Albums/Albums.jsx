@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import MyAlbumsItem from '../../components/MyAlbumsItem';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import Pagination from '../../components/Pagination';
+import { Link } from 'react-router-dom';
 
 const dummyMyAlbums = [];
 
@@ -84,7 +85,11 @@ export default function Albums() {
             />
             <div className='w-full flex justify-between'>
                 <h1 className='font-medium text-4xl'>My Albums</h1>
-                <div></div>
+                <Link to={'new'}>
+                    <button className='btn btn-primary text-lg font-bold px-3 py-2'>
+                        Add New Album
+                    </button>
+                </Link>
             </div>
             <div className='flex flex-col gap-6'>
                 <div className='flex flex-col gap-4'>
