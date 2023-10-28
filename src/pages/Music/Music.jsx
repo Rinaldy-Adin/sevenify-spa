@@ -3,41 +3,31 @@ import { useState, useEffect } from 'react';
 import MyMusicItem from '../../components/MyMusicItem';
 import { Link } from 'react-router-dom';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import Pagination from '../../components/Pagination';
 
-const dummyMyMusic = [
-    {
-        music_name: 'Music Name',
-        music_id: 1,
+const dummyMyMusic = [];
+
+for (let idx = 0; idx < 100; idx++) {
+    dummyMyMusic.push({
+        music_name: `Music ${idx + 1}`,
+        music_id: idx + 1,
         is_premium: false,
         cover: placeholderImg,
-    },
-    {
-        music_name: 'Music Name',
-        music_id: 2,
-        is_premium: false,
-        cover: placeholderImg,
-    },
-    {
-        music_name: 'Music Name',
-        music_id: 3,
-        is_premium: false,
-        cover: placeholderImg,
-    },
-    {
-        music_name: 'Music Name',
-        music_id: 4,
-        is_premium: true,
-        cover: placeholderImg,
-    },
-];
+    });
+}
 
 export default function Music() {
     const [myMusic, setMyMusic] = useState([]);
     const [onModalConfirm, setOnModalConfirm] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
-        setMyMusic(dummyMyMusic);
-    }, []);
+        setMyMusic(dummyMyMusic.slice(currentPage * 5, (currentPage + 1) * 5));
+    }, [currentPage]);
+
+    const handlePageClick = (event) => {
+        setCurrentPage(event.selected);
+    };
 
     const handleTogglePremium = (musicId) => {
         const toggleMusic = () => {
@@ -98,29 +88,41 @@ export default function Music() {
                     </button>
                 </Link>
             </div>
-            <div className='flex flex-col gap-4'>
-                {myMusic.length != 0 ? (
-                    myMusic.map(
-                        ({ music_name, music_id, is_premium, cover }, idx) => {
-                            return (
-                                <MyMusicItem
-                                    key={idx}
-                                    musicId={music_id}
-                                    isPremium={is_premium}
-                                    musicName={music_name}
-                                    onPlayMusic={() => {}}
-                                    onTogglePremium={handleTogglePremium}
-                                    cover={cover}
-                                    onDelete={handleDelete}
-                                />
-                            );
-                        }
-                    )
-                ) : (
-                    <h2 className='text-3xl text-center text-gray-500 font-medium'>
-                        You currently have no music
-                    </h2>
-                )}
+            <div className='flex flex-col gap-6'>
+                <div className='flex flex-col gap-4'>
+                    {myMusic.length != 0 ? (
+                        myMusic.map(
+                            (
+                                { music_name, music_id, is_premium, cover },
+                                idx
+                            ) => {
+                                return (
+                                    <MyMusicItem
+                                        key={idx}
+                                        musicId={music_id}
+                                        isPremium={is_premium}
+                                        musicName={music_name}
+                                        onPlayMusic={() => {}}
+                                        onTogglePremium={handleTogglePremium}
+                                        cover={cover}
+                                        onDelete={handleDelete}
+                                    />
+                                );
+                            }
+                        )
+                    ) : (
+                        <h2 className='text-3xl text-center text-gray-500 font-medium'>
+                            You currently have no music
+                        </h2>
+                    )}
+                </div>
+                <Pagination
+                    className='self-center'
+                    handlePageClick={handlePageClick}
+                    itemCount={100}
+                    pageSize={5}
+                    currentPage={currentPage + 1}
+                />
             </div>
         </div>
     );
