@@ -15,6 +15,10 @@ export default function AppLayout() {
             url: "/followers",
             text: "Followers"
         },
+        {
+            url: "/login",
+            text: "Login"
+        },
     ]
 
     return (
