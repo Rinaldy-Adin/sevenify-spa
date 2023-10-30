@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import backgroundImage from '../../assets/background.jpg';
 import logoSquareImg from "../../assets/sevenify-square.png";
 
@@ -12,6 +13,11 @@ const loginStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   padding: '20px',
+  overflow: 'hidden', // Menambahkan ini untuk menghilangkan scrolling
+};
+
+const bodyStyle = {
+  overflow: 'hidden', // Menghilangkan scrolling pada body
 };
 
 const formStyle = {
@@ -34,6 +40,7 @@ const labelStyle = {
 const textStyle = {
   fontWeight: 'bold',
   textAlign: 'left',
+  cursor: 'pointer',
 };
 
 const buttonStyle = {
@@ -58,6 +65,14 @@ const logoImageStyle = {
 };
 
 function Login() {
+  // Set body style to prevent scrolling
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'visible'; // Kembalikan scrolling ketika komponen tidak lagi dirender
+    };
+  }, []);
+
   return (
     <div style={{ ...loginStyle, backgroundImage: `url(${backgroundImage})` }}>
       <form style={formStyle}>
