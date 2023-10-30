@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import React from "react";
 import { Button, Text } from "tailwindcss";
-
-export default function RequestJoin() {
-  return (
-    <div>
-      <Text>Hello World!</Text>
-      <Button>Click me!</Button>
-    </div>
-  );
-}
 import backgroundImage from "../../assets/background-join.jpeg";
 
 export default function RequestJoin() {
