@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Button, Text } from "tailwindcss";
+import React from "react";
+import { Button, Text } from "tailwindcss";
+
+export default function RequestJoin() {
+  return (
+    <div>
+      <Text>Hello World!</Text>
+      <Button>Click me!</Button>
+    </div>
+  );
+}
 import backgroundImage from "../../assets/background-join.jpeg";
 
 export default function RequestJoin() {
@@ -8,63 +18,58 @@ export default function RequestJoin() {
 
   // Check is user join
   const handleJoin = () => {
-    // Misalnya, Anda dapat mengirim permintaan ke server untuk memproses permintaan bergabung
-    // Kemudian, setelah berhasil bergabung, atur isJoined menjadi true
-    setIsJoined(true);
+    // Check is user join
+    // setIsJoined(true);
+  };
+
+  // Logout function
+  const handleLogout = () => {
+    // Logout user
+    // setIsJoined(false);
   };
 
   return (
-    <Container>
-      <Row>
-        <Col xs="12" sm="10" md="8" lg="6" xl="4">
-          <div
-            style={{
-              backgroundImage: `url(${backgroundImage})`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
-          >
-            {isJoined ? ( // User joined
-              <>
-                <h1 class="text-4xl font-bold text-white">
-                  Hold on tight, your Sevenify+ request is being reviewed.
-                </h1>
-              </>
-            ) : ( // User not joined
-              <>
-                <h1 class="text-4xl font-bold text-white">
-                  Share music with us, join Sevenify+
-                </h1>
-                <p class="text-lg text-white">
-                  Sevenify+ is a premium subscription service that gives you access to exclusive features, such as:
-                </p>
-                <ul class="list-disc text-white">
-                  <li>Download music for offline listening</li>
-                  <li>Access to ad-free listening</li>
-                  <li>Unlimited skips</li>
-                  <li>Higher streaming quality</li>
-                </ul>
-                <Button
-                  class="mt-4 btn text-white"
-                  disabled={isLoading}
-                  onClick={handleJoin}
-                >
-                  Join Sevenify+
-                </Button>
-              </>
-            )}
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col xs="12" sm="10" md="8" lg="6" xl="4">
-          <h3 class="text-lg text-white">Why join Sevenify+?</h3>
-          <p class="text-white">
-            Sevenify+ is the best way to enjoy your music. With ad-free listening, unlimited skips, and higher streaming quality, you can listen to your favorite songs without interruption.
+    <div
+      className="flex items-center justify-center min-h-screen"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="w-full max-w-md bg-white p-8">
+        {isJoined ? ( // User joined
+          <h1 className="text-4xl font-bold text-gray-900">
+            Hold on tight, your Sevenify+ request is being reviewed.
+          </h1>
+        ) : ( // User not joined
+          <>
+            <h1 className="text-4xl font-bold text-gray-900">
+              Share music with us, join Sevenify+
+            </h1>
+            <Button
+              className="mt-4 btn"
+              disabled={isLoading}
+              onClick={handleJoin}
+            >
+                Join Sevenify+
+            </Button>
+          </>
+        )}
+        <p className="mt-8 text-lg text-gray-600">Why join Sevenify+?</p>
+        <p className="mt-2 text-gray-600">
+          Sevenify+ is a premium subscription service that offers a wide range of exclusive features designed to enhance your experience.
+        </p>
+        <div className="flex justify-between mt-8">
+          <Button className="mt-4 btn" onClick={handleLogout}>
+            Logout
+          </Button>
+          <p className="mt-4 text-sm text-gray-600">
+            Login with a different account
           </p>
-        </Col>
-      </Row>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 }
