@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { Button, Text } from "tailwindcss";
+import { useState } from 'react';
 import backgroundImage from "../../assets/background-join.jpeg";
 
 export default function RequestJoin() {
-  const [isLoading, setIsLoading] = useState(true);
   const [isJoined, setIsJoined] = useState(false); // Initial State : user not joined
 
   // Check is user join
@@ -38,13 +36,12 @@ export default function RequestJoin() {
             <h1 className="text-4xl font-bold text-gray-900">
               Share music with us, join Sevenify+
             </h1>
-            <Button
+            <button
               className="mt-4 btn"
-              disabled={isLoading}
               onClick={handleJoin}
             >
                 Join Sevenify+
-            </Button>
+            </button>
           </>
         )}
         <p className="mt-8 text-lg text-gray-600">Why join Sevenify+?</p>
@@ -52,9 +49,9 @@ export default function RequestJoin() {
           Sevenify+ is a premium subscription service that offers a wide range of exclusive features designed to enhance your experience.
         </p>
         <div className="flex justify-between mt-8">
-          <Button className="mt-4 btn" onClick={handleLogout}>
+          <button className="mt-4 btn" onClick={handleLogout}>
             Logout
-          </Button>
+          </button>
           <p className="mt-4 text-sm text-gray-600">
             Login with a different account
           </p>
