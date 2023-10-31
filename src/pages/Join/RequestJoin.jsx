@@ -34,7 +34,7 @@ export default function RequestJoin() {
   }, [isJoined]);
 
   return (
-    <><div className="frame-join flex flex-col items-center gap-2.5 w-full bg-white">
+    <div className="frame-join flex flex-col items-center gap-2.5 w-full bg-white">
       <div className="request-being-reviewed flex flex-col justify-between items-start gap-2.5 self-stretch py-11 px-16 h-[400px]"
         style={backgroundStyle}>
         <div className="text-white text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[normal]']">
@@ -43,16 +43,13 @@ export default function RequestJoin() {
       </div>
 
       <div className="join-sevenify flex flex-col justify-between items-start gap-2.5 self-stretch py-11 px-16 h-[400px]"
-        style={backgroundStyle}>
-        <h1 className="text-white text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[normal]']">
+      style={backgroundStyle}>
+        <div className="text-white text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[normal]']">
           Share music with us, join Sevenify+
-        </h1>
+        </div>
         <button
-          className="btn btn-primary text-lg font-bold px-3 py-3 self-end"
+          className= "btn btn-primary text-lg md:text-1rem lg:text-xl font-bold px-3 py-2 md:px-4 md:py-3 lg:px-5 lg:py-4 self-end mt-10" 
           onClick={handleJoin}
-          style={{
-            alignSelf: 'flex-end',
-          }}
         >
           Join Sevenify+
         </button>
@@ -71,12 +68,12 @@ export default function RequestJoin() {
           <div className="Jakarta Sans self-stretch text-black font-['Plus text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl  font-bold leading-[normal]']">
             Log in with a different account
           </div>
-          <button className="btn btn-primary text-lg font-bold px-3 py-2" onClick={handleLogout}>
+          <button className="btn btn-primary text-lg md:text-[1rem] lg:text- font-bold px-3 py-2 md:px-3 md:py-2 lg:px-3 lg:py-2" 
+          onClick={handleLogout}>
             Logout
           </button>
         </div>
       </div>
     </div>
-    </>
   );
 };
