@@ -1,64 +1,65 @@
-import placeholderImg from '../../assets/placeholder.jpg';
 import { useState, useEffect } from 'react';
 import MyAlbumsItem from '../../components/MyAlbumsItem';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import Pagination from '../../components/Pagination';
 import { Link } from 'react-router-dom';
-
-const dummyMyAlbums = [];
-
-for (let idx = 0; idx < 100; idx++) {
-    dummyMyAlbums.push({
-        album_name: `Album ${idx + 1}`,
-        album_id: idx + 1,
-        is_premium: false,
-        cover: placeholderImg,
-    });
-}
+import restClient from '../../utils/restClient';
+import toast from 'react-hot-toast';
 
 export default function Albums() {
     const [myAlbums, setMyAlbums] = useState([]);
     const [onModalConfirm, setOnModalConfirm] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
+    const [pageCount, setPageCount] = useState(0);
+
+    const refreshItemList = async () => {
+        try {
+            const resp = await restClient.get(`/api/album?page=${currentPage + 1}`);
+            const data = resp.data.body;
+            setMyAlbums(data.album);
+            setPageCount(data.page_count);
+        } catch (error) {
+            toast.error('Error reaching the server');
+        }
+    };
 
     useEffect(() => {
-        setMyAlbums(
-            dummyMyAlbums.slice(currentPage * 5, (currentPage + 1) * 5)
-        );
+        refreshItemList();
     }, [currentPage]);
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
     };
 
-    const handleTogglePremium = (albumId) => {
-        const toggleAlbum = () => {
-            setMyAlbums(
-                [...myAlbums].map((data) => {
-                    if (data.album_id == albumId) {
-                        return {
-                            ...data,
-                            is_premium: !data.is_premium,
-                        };
-                    } else {
-                        return data;
-                    }
-                })
-            );
+    const handleTogglePremium = (albumId, isPremium) => {
+        const toggleAlbum = async () => {
+            try {
+                const formData = new FormData();
+                formData.append('is_premium', !isPremium);
+                await restClient.patch(`/api/album/${albumId}?premium=${isPremium}`, formData);
+                refreshItemList();
+                toast('Succesfully updated music');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
             title: 'Confirm Toggle',
-            message: 'Do you want to toggle acces for this album',
+            message: 'Do you want to toggle access for this album',
             callback: toggleAlbum,
         });
     };
 
-    const handleDelete = (albumId) => {
-        const deleteAlbum = () => {
-            setMyAlbums(
-                [...myAlbums].filter(({ album_id }) => album_id != albumId)
-            );
+    const handleDelete = (albumId, isPremium) => {
+        const deleteAlbum = async () => {
+            try {
+                await restClient.delete(`/api/album/${albumId}?premium=${isPremium}`);
+                refreshItemList();
+                toast('Succesfully deleted music');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -96,17 +97,16 @@ export default function Albums() {
                     {myAlbums.length != 0 ? (
                         myAlbums.map(
                             (
-                                { album_name, album_id, is_premium, cover },
+                                { title, id, is_premium },
                                 idx
                             ) => {
                                 return (
                                     <MyAlbumsItem
                                         key={idx}
-                                        albumId={album_id}
+                                        albumId={id}
                                         isPremium={is_premium}
-                                        albumName={album_name}
+                                        albumName={title}
                                         onTogglePremium={handleTogglePremium}
-                                        cover={cover}
                                         onDelete={handleDelete}
                                     />
                                 );
@@ -121,7 +121,7 @@ export default function Albums() {
                 <Pagination
                     className='self-center'
                     handlePageClick={handlePageClick}
-                    itemCount={100}
+                    itemCount={pageCount * 5}
                     pageSize={5}
                     currentPage={currentPage + 1}
                 />

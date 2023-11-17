@@ -1,48 +1,47 @@
-import placeholderImg from '../../assets/placeholder.jpg';
 import { useState, useEffect } from 'react';
 import MyMusicItem from '../../components/MyMusicItem';
 import { Link } from 'react-router-dom';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import Pagination from '../../components/Pagination';
-
-const dummyMyMusic = [];
-
-for (let idx = 0; idx < 100; idx++) {
-    dummyMyMusic.push({
-        music_name: `Music ${idx + 1}`,
-        music_id: idx + 1,
-        is_premium: false,
-        cover: placeholderImg,
-    });
-}
+import restClient from '../../utils/restClient';
+import toast from 'react-hot-toast';
 
 export default function Music() {
     const [myMusic, setMyMusic] = useState([]);
     const [onModalConfirm, setOnModalConfirm] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
+    const [pageCount, setPageCount] = useState(0);
+
+    const refreshItemList = async () => {
+        try {
+            const resp = await restClient.get(`/api/music?page=${currentPage + 1}`);
+            const data = resp.data.body;
+            setMyMusic(data.music);
+            setPageCount(data.page_count);
+        } catch (error) {
+            toast.error('Error reaching the server');
+        }
+    };
 
     useEffect(() => {
-        setMyMusic(dummyMyMusic.slice(currentPage * 5, (currentPage + 1) * 5));
+        refreshItemList();
     }, [currentPage]);
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
     };
 
-    const handleTogglePremium = (musicId) => {
-        const toggleMusic = () => {
-            setMyMusic(
-                [...myMusic].map((data) => {
-                    if (data.music_id == musicId) {
-                        return {
-                            ...data,
-                            is_premium: !data.is_premium,
-                        };
-                    } else {
-                        return data;
-                    }
-                })
-            );
+    const handleTogglePremium = (musicId, isPremium) => {
+        const toggleMusic = async () => {
+            try {
+                const formData = new FormData();
+                formData.append('is_premium', !isPremium);
+                await restClient.patch(`/api/music/${musicId}?premium=${isPremium}`, formData);
+                refreshItemList();
+                toast('Succesfully updated music');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -52,11 +51,15 @@ export default function Music() {
         });
     };
 
-    const handleDelete = (musicId) => {
-        const deleteMusic = () => {
-            setMyMusic(
-                [...myMusic].filter(({ music_id }) => music_id != musicId)
-            );
+    const handleDelete = (musicId, isPremium) => {
+        const deleteMusic = async () => {
+            try {
+                await restClient.delete(`/api/music/${musicId}?premium=${isPremium}`);
+                refreshItemList();
+                toast('Succesfully deleted music');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
         setOnModalConfirm({
             title: 'Confirm Delete',
@@ -93,18 +96,18 @@ export default function Music() {
                     {myMusic.length != 0 ? (
                         myMusic.map(
                             (
-                                { music_name, music_id, is_premium, cover },
+                                { title, id, is_premium, coverExt },
                                 idx
                             ) => {
                                 return (
                                     <MyMusicItem
                                         key={idx}
-                                        musicId={music_id}
+                                        musicId={id}
                                         isPremium={is_premium}
-                                        musicName={music_name}
+                                        musicName={title}
                                         onPlayMusic={() => {}}
                                         onTogglePremium={handleTogglePremium}
-                                        cover={cover}
+                                        coverExt={coverExt}
                                         onDelete={handleDelete}
                                     />
                                 );
@@ -119,7 +122,7 @@ export default function Music() {
                 <Pagination
                     className='self-center'
                     handlePageClick={handlePageClick}
-                    itemCount={100}
+                    itemCount={pageCount * 5}
                     pageSize={5}
                     currentPage={currentPage + 1}
                 />

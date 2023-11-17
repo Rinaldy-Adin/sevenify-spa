@@ -6,10 +6,10 @@ import {
 import AppLayout from '../pages/layouts/AppLayout';
 import Music from '../pages/Music/Music';
 import Login from '../pages/Login/Login';
+import Logout from '../pages/Login/Logout';
 import LoginLayout from '../pages/layouts/LoginLayout';
 import UnacceptedLayout from '../pages/layouts/UnacceptedLayout';
 import RequestJoin from '../pages/Join/RequestJoin';
-import Components from '../pages/Components/Components';
 import Albums from '../pages/Albums/Albums';
 import NewMusic from '../pages/Music/NewMusic';
 import EditMusic from '../pages/Music/EditMusic';
@@ -18,11 +18,16 @@ import Admin from '../pages/Admin/Admin';
 import AdminLayout from '../pages/layouts/AdminLayout';
 import NewAlbum from '../pages/Albums/NewAlbum';
 import EditAlbum from '../pages/Albums/EditAlbum';
+import { AuthProvider } from '../utils/authContext';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <AppLayout />,
+        element: (
+            <AuthProvider>
+                <AppLayout />{' '}
+            </AuthProvider>
+        ),
         children: [
             {
                 index: true,
@@ -67,14 +72,18 @@ const router = createBrowserRouter([
                 element: <Followers />,
             },
             {
-                path: '/components',
-                element: <Components />,
+                path: '/logout',
+                element: <Logout />,
             },
         ],
     },
     {
         path: '/',
-        element: <LoginLayout />,
+        element: (
+            <AuthProvider>
+                <LoginLayout />
+            </AuthProvider>
+        ),
         children: [
             {
                 path: '/login',
@@ -84,7 +93,11 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <UnacceptedLayout />,
+        element: (
+            <AuthProvider>
+                <UnacceptedLayout />
+            </AuthProvider>
+        ),
         children: [
             {
                 path: '/join',
@@ -94,7 +107,11 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <AdminLayout />,
+        element: (
+            <AuthProvider>
+                <AdminLayout />
+            </AuthProvider>
+        ),
         children: [
             {
                 path: '/admin',

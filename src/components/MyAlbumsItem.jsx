@@ -1,32 +1,34 @@
 import { MdEdit, MdDelete } from 'react-icons/md';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
+import config from '../utils/config';
 
 export default function MyAlbumsItem({
     albumName,
     albumId,
     isPremium,
-    cover,
     onTogglePremium,
     onDelete
 }) {
     const handleToggle = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        onTogglePremium(albumId);
+        onTogglePremium(albumId, isPremium);
     };
 
     const handleDelete = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        onDelete(albumId);
+        onDelete(albumId, isPremium);
     };
+
+    const imgsrc = isPremium ? `${config.restUrl}/static/cover/album/${albumId}` : `${config.phpUrl}/static/covers/album/${albumId}`
 
     return (
         <div className='w-full flex justify-between px-4 py-3 h-20'>
             <div className='flex gap-[10px] items-center'>
                 <img
-                    src={cover}
+                    src={imgsrc}
                     alt='album cover'
                     className='h-full cursor-router aspect-square rounded-lg'
                 />

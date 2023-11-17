@@ -2,10 +2,15 @@ import { useState, useEffect } from 'react';
 import placeholderImg from '../../assets/placeholder.jpg';
 import { useForm } from 'react-hook-form';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import toast from 'react-hot-toast';
+import restClient from '../../utils/restClient';
+import {useNavigate} from 'react-router-dom';
 
 export default function NewMusic() {
     const [coverImg, setCoverImg] = useState(placeholderImg);
     const [onModalConfirm, setOnModalConfirm] = useState(null);
+
+    const navigate = useNavigate();
 
     const {
         register,
@@ -16,8 +21,24 @@ export default function NewMusic() {
     } = useForm();
 
     const onSubmit = (data) => {
-        const submit = () => {
-            console.log(data);
+        const submit = async () => {
+            try {
+                const formData = new FormData();
+                
+                for (const key in data) {
+                    if (data[key] instanceof FileList) {
+                        formData.append(key, data[key][0]);
+                    } else {
+                        formData.append(key, data[key]);
+                    }
+                }
+                
+                await restClient.post(`/api/music/`, formData);
+                toast("Successfully added music")
+                navigate('/music');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -95,7 +116,7 @@ export default function NewMusic() {
                             type='file'
                             className='file-input file-input-bordered file-input-primary w-full max-w-xs'
                             accept='image/*'
-                            {...register('music_cover', {
+                            {...register('cover', {
                                 onChange: handleChangeCover,
                             })}
                         />
@@ -116,7 +137,7 @@ export default function NewMusic() {
                                 type='text'
                                 placeholder='Enter your title'
                                 className='input input-bordered w-full'
-                                {...register('music_name', {
+                                {...register('title', {
                                     required: 'Title is required',
                                     maxLength: {
                                         value: 255,
@@ -138,7 +159,7 @@ export default function NewMusic() {
                                 type='text'
                                 placeholder='Enter your genre'
                                 className='input input-bordered w-full'
-                                {...register('music_genre', {
+                                {...register('genre', {
                                     required: 'Genre is required',
                                     maxLength: {
                                         value: 255,
@@ -152,16 +173,6 @@ export default function NewMusic() {
                                 </span>
                             </label>
                         </div>
-                        <div className='form-control w-full'>
-                            <label className='label'>
-                                <span className='label-text'>Description</span>
-                            </label>
-                            <textarea
-                                className='textarea textarea-bordered h-16'
-                                placeholder='Enter your description'
-                                {...register('music_description')}
-                            />
-                        </div>
 
                         <div className='form-control w-full'>
                             <label className='label'>
@@ -173,7 +184,7 @@ export default function NewMusic() {
                                 type='file'
                                 className='file-input file-input-bordered file-input-primary w-full max-w-xs'
                                 accept='audio/*'
-                                {...register('music_file', {
+                                {...register('audio', {
                                     onChange: handleChangeAudio,
                                     required: "Audio file required"
                                 })}

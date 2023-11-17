@@ -3,22 +3,6 @@ import { Outlet } from 'react-router-dom';
 
 export default function LoginLayout() {
     const navLinks = [
-        {
-            url: "/music",
-            text: "Premium Music"
-        },
-        {
-            url: "/albums",
-            text: "Premium Albums"
-        },
-        {
-            url: "/followers",
-            text: "Followers"
-        },
-        {
-            url: "/login",
-            text: "Login"
-        },
     ]
 
     return (

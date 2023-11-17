@@ -2,12 +2,12 @@ import { MdEdit, MdDelete } from 'react-icons/md';
 import playButtonImg from '../assets/play-button.png';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
+import config from '../utils/config';
 
 export default function MyMusicItem({
     musicName,
     musicId,
     isPremium,
-    cover,
     onPlayMusic,
     onTogglePremium,
     onDelete,
@@ -15,7 +15,7 @@ export default function MyMusicItem({
     const handleToggle = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        onTogglePremium(musicId);
+        onTogglePremium(musicId, isPremium);
     };
 
     const handlePlay = (e) => {
@@ -27,8 +27,10 @@ export default function MyMusicItem({
     const handleDelete = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        onDelete(musicId);
+        onDelete(musicId, isPremium);
     };
+
+    const imgsrc = isPremium ? `${config.restUrl}/static/cover/music/${musicId}` : `${config.phpUrl}/static/covers/music/${musicId}`
 
     return (
         <div className='w-full flex justify-between px-4 py-3 h-20'>
@@ -40,7 +42,7 @@ export default function MyMusicItem({
                     className='cursor-pointer w-8 h-8'
                 />
                 <img
-                    src={cover}
+                    src={imgsrc}
                     alt='music cover'
                     className='h-full cursor-router aspect-square rounded-lg'
                 />
@@ -57,7 +59,7 @@ export default function MyMusicItem({
                 </p>
             </div>
             <div className='flex px-3 py-1 gap-8 items-center'>
-                <Link to={`/music/${musicId}`}>
+                <Link to={`/music/${musicId}?premium=${isPremium}`}>
                     <MdEdit
                         size={28}
                         className='cursor-pointer text-gray-500'
