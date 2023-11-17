@@ -1,39 +1,47 @@
-# React + Vite
+# Sevenify - Client SPA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Deskripsi Aplikasi
+Sevenify merupakan perangkat lunak pemutar musik berbasis web. Aplikasi ini dilengkapi dengan fitur pemutar musik, pencarian lagu, serta album. Tidak hanya mendengarkan musik, pengguna juga dapat mengunggah musik maupun membuat album sendiri. Pengguna dapat bergabung dengan Sevenify+ untuk dapat mengunggah lagu-lagu premium yang hanya dapat diakses pengguna tertentu. Pengguna juga dapat mengikuti atau follow pengguna lain untuk dapat mendengarkan lagu premium milik pengguna lain. Admin dapat melakukan modifikasi data musik, album, serta memodifikasi akun pada aplikasi. Dengan desain tampilan yang sederhana, aplikasi ini diharapkan dapat digunakan dengan mudah oleh pengguna. Mari nikmati musik bersama Sevenify, Feel the Beat Live the Melody!
 
 ## Prerequisites
+- Node.js, untuk menjalankan JavaScript dan npm packages.
 
-Make sure you have the following software installed on your machine:
+## Cara Instalasi
+1. Pastikan _requirements_ sudah terinstall pada perangkat Anda
+2. Buka terminal
+3. Lakukan clone repository ini : `git clone https://github.com/Rinaldy-Adin/sevenify-spa.git`
+4. Pindah ke directory repository: `cd sevenify-spa`
+5. Install dependencies project dengan npm: `npm install`
+6. Jalankan development server dan React dengan command: `npm run dev`
 
-- [Node.js](https://nodejs.org/): You need Node.js to run JavaScript and npm packages.
+## Tangkapan Layar
+- Halaman Admin
+<img src="images/admin.png" width="450" align="center">
 
-## Installation
+- Halaman Musik
+<img src="images/music.png" width="450" align="center">
 
-1. Clone this repository to your local machine:
+- Halaman Album
+<img src="images/album.png" width="450" align="center">
 
-```bash
-git clone https://github.com/yourusername/your-react-vite-project.git
-```
+- Halaman Followers
+<img src="images/followers.png" width="450" align="center">
 
-2. Change your current working directory to the project folder:
+- Halaman Login
+<img src="images/login.png" width="450" align="center">
 
-```bash
-cd your-react-vite-project
-```
-3. Install project dependencies using npm:
+- Halaman Join
+<img src="images/join.png" width="450" align="center">
 
-```bash
-npm install
-```
+## Pembagian Tugas
+FrontEnd Halaman Admin : 13521134 <br>
+FrontEnd Halaman Musik : 13521134 <br>
+FrontEnd Halaman Album : 13521134 <br>
+FrontEnd Halaman Followers : 13521134 <br>
+FrontEnd Halaman Login : 10023174 <br>
+FrontEnd Halaman Join : 13521077 <br>
 
-4. To start the development server and run your React project, use the following command:
-
-```bash
-npm run dev
-```
+## Kontributor
+10023174 Ilham Syam<br>
+13521077 Husnia Munzayana<br>
+13521134 Rinaldy Adin<br>
