@@ -1,24 +1,23 @@
 import Navbar from '../../components/Navbar';
 import { Outlet } from 'react-router-dom';
-import {AuthContext} from '../../utils/authContext'
+import { AuthContext } from '../../utils/authContext';
 import { useContext, useEffect } from 'react';
 
 export default function AppLayout() {
-    const { isAuthenticated, login } = useContext(AuthContext);
-   
+    const { isAuthenticated, login, isAdmin, isPremium, joinPremium } = useContext(AuthContext);
+
     useEffect(() => {
         const loginOnMount = async () => {
-          try {
-            if (!isAuthenticated)
-                await login();
-    
-          } catch (error) {
-            console.error('Login failed:', error);
-          }
+            try {
+                if (!isAuthenticated) await login();
+                if (!isPremium) await joinPremium();
+            } catch (error) {
+                console.error('Login failed:', error);
+            }
         };
-    
+
         loginOnMount();
-      }, [login]);
+    }, [login]);
 
     const navLinks = [
         {
@@ -33,15 +32,12 @@ export default function AppLayout() {
             url: '/followers',
             text: 'Followers',
         },
-        {
-            url: '/logout',
-            text: 'Logout',
-        },
+        ...(isAdmin ? [{ url: '/admin', text: 'Admin' }] : []),
     ];
 
     return (
         <div className='w-full min-h-screen bg-gray-300 flex flex-col items-center'>
-            <Navbar links={navLinks} />
+            <Navbar links={navLinks} canLogout={true} />
             <main className='flex-1 bg-white w-full xl:w-[1280px]'>
                 <Outlet />
             </main>

@@ -4,29 +4,9 @@ import { useForm } from 'react-hook-form';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import Pagination from '../../components/Pagination';
 import NewAlbumMyMusic from '../../components/NewAlbumMyMusic';
-
-const dummyNewAlbumMyMusic = [];
-const dummyNewAlbumAddedMusic = [];
-
-for (let idx = 0; idx < 100; idx++) {
-    dummyNewAlbumMyMusic.push({
-        music_name: `Music ${idx + 1}`,
-        music_id: idx + 1,
-        is_premium: true,
-        cover: placeholderImg,
-        isAdded: idx < 5,
-    });
-}
-
-for (let idx = 0; idx < 5; idx++) {
-    dummyNewAlbumAddedMusic.push({
-        music_name: `Music ${idx + 1}`,
-        music_id: idx + 1,
-        is_premium: true,
-        cover: placeholderImg,
-        isAdded: true,
-    });
-}
+import restClient from '../../utils/restClient';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function NewAlbum() {
     const [coverImg, setCoverImg] = useState(placeholderImg);
@@ -34,16 +14,27 @@ export default function NewAlbum() {
     const [myMusic, setMyMusic] = useState([]);
     const [addedMusic, setAddedMusic] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
+    const [pageCount, setPageCount] = useState(0);
+
+    const navigate = useNavigate();
+
+    const refreshItemList = async () => {
+        try {
+            const resp = await restClient.get(`/api/music?page=${currentPage + 1}&premium=true`);
+            const data = resp.data.body;
+
+            const addedMusicIds = addedMusic.map((music) => music.id);
+            setMyMusic(data.music.filter((item) => item.is_premium).map((item) => ({...item, isAdded: addedMusicIds.includes(item.id)})));
+            setPageCount(data.page_count);
+        } catch (error) {
+            toast.error('Error reaching the server');
+        }
+    };
+
 
     useEffect(() => {
-        setMyMusic(
-            dummyNewAlbumMyMusic.slice(currentPage * 5, (currentPage + 1) * 5)
-        );
-    }, [currentPage]);
-
-    useEffect(() => {
-        setAddedMusic(dummyNewAlbumAddedMusic);
-    }, []);
+        refreshItemList();
+    }, [currentPage, addedMusic]);
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
@@ -58,8 +49,28 @@ export default function NewAlbum() {
     } = useForm();
 
     const onSubmit = (data) => {
-        const submit = () => {
-            console.log(data);
+        const submit = async () => {
+            try {
+                const formData = new FormData();
+                
+                for (const key in data) {
+                    if (data[key] instanceof FileList) {
+                        formData.append(key, data[key][0]);
+                    } else {
+                        formData.append(key, data[key]);
+                    }
+                }
+
+                addedMusic.forEach((music) => {
+                    formData.append('music_id[]', music.id)
+                });
+                
+                await restClient.post(`/api/album/`, formData);
+                toast("Successfully added album")
+                navigate('/albums');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -95,15 +106,14 @@ export default function NewAlbum() {
         }
     };
 
-    const handleToggleAdded = (musicId) => {
-        if (dummyNewAlbumMyMusic[musicId - 1].isAdded) {
-            dummyNewAlbumMyMusic[musicId - 1].isAdded = false;
-            setAddedMusic([...addedMusic].filter(({music_id}) => musicId != music_id));
+    const handleToggleAdded = (musicId, currentlyAdded) => {
+        if (currentlyAdded) {
+            setAddedMusic([...addedMusic].filter(({id}) => musicId != id));
         } else {
-            dummyNewAlbumMyMusic[musicId - 1].isAdded = true;
-            setAddedMusic([...addedMusic, dummyNewAlbumMyMusic[musicId - 1]]);
+            const music = myMusic.filter(({id}) => id == musicId)[0];
+            music.isAdded = true;
+            setAddedMusic([...addedMusic, music]);
         }
-        setCurrentPage(currentPage);
     };
 
     useEffect(() => {
@@ -137,7 +147,7 @@ export default function NewAlbum() {
                             type='file'
                             className='file-input file-input-bordered file-input-primary w-full max-w-xs'
                             accept='image/*'
-                            {...register('album_cover', {
+                            {...register('cover', {
                                 onChange: handleChangeCover,
                             })}
                         />
@@ -157,7 +167,7 @@ export default function NewAlbum() {
                             type='text'
                             placeholder='Enter your title'
                             className='input input-bordered w-full'
-                            {...register('album_name', {
+                            {...register('title', {
                                 required: 'Title is required',
                                 maxLength: {
                                     value: 255,
@@ -186,15 +196,14 @@ export default function NewAlbum() {
                         {myMusic.length != 0 ? (
                             myMusic.map(
                                 (
-                                    { music_name, music_id, isAdded, cover },
+                                    { title, id, isAdded },
                                     idx
                                 ) => (
                                     <NewAlbumMyMusic
                                         key={idx}
-                                        musicName={music_name}
-                                        musicId={music_id}
+                                        musicName={title}
+                                        musicId={id}
                                         isAdded={isAdded}
-                                        cover={cover}
                                         onPlayMusic={() => {}}
                                         onToggleAdded={handleToggleAdded}
                                     />
@@ -209,7 +218,7 @@ export default function NewAlbum() {
                     <Pagination
                         className='self-center'
                         handlePageClick={handlePageClick}
-                        itemCount={95}
+                        itemCount={pageCount * 5}
                         pageSize={5}
                         currentPage={currentPage + 1}
                     />
@@ -220,13 +229,12 @@ export default function NewAlbum() {
                 <div className='flex flex-col gap-4'>
                     {addedMusic.length != 0 ? (
                         addedMusic.map(
-                            ({ music_name, music_id, isAdded, cover }, idx) => (
+                            ({ title, id, isAdded }, idx) => (
                                 <NewAlbumMyMusic
                                     key={idx}
-                                    musicName={music_name}
-                                    musicId={music_id}
+                                    musicName={title}
+                                    musicId={id}
                                     isAdded={isAdded}
-                                    cover={cover}
                                     onPlayMusic={() => {}}
                                     onToggleAdded={handleToggleAdded}
                                 />

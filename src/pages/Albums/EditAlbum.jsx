@@ -4,29 +4,10 @@ import { useForm } from 'react-hook-form';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import Pagination from '../../components/Pagination';
 import NewAlbumMyMusic from '../../components/NewAlbumMyMusic';
-
-const dummyEditAlbumMyMusic = [];
-const dummyEditAlbumAddedMusic = [];
-
-for (let idx = 0; idx < 100; idx++) {
-    dummyEditAlbumMyMusic.push({
-        music_name: `Music ${idx + 1}`,
-        music_id: idx + 1,
-        is_premium: true,
-        cover: placeholderImg,
-        isAdded: idx < 5,
-    });
-}
-
-for (let idx = 0; idx < 5; idx++) {
-    dummyEditAlbumAddedMusic.push({
-        music_name: `Music ${idx + 1}`,
-        music_id: idx + 1,
-        is_premium: true,
-        cover: placeholderImg,
-        isAdded: true,
-    });
-}
+import restClient from '../../utils/restClient';
+import toast from 'react-hot-toast';
+import { useNavigate, useLocation } from 'react-router-dom';
+import config from '../../utils/config';
 
 export default function EditAlbum() {
     const [coverImg, setCoverImg] = useState(placeholderImg);
@@ -34,15 +15,58 @@ export default function EditAlbum() {
     const [myMusic, setMyMusic] = useState([]);
     const [addedMusic, setAddedMusic] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
+    const [pageCount, setPageCount] = useState(0);
+    
+    const navigate = useNavigate();
+    const { pathname, search } = useLocation();
+
+    const refreshItemList = async () => {
+        try {
+            const isPremium = search.split('=').pop();
+            const resp = await restClient.get(`/api/music?page=${currentPage + 1}&premium=${isPremium}`);
+            const data = resp.data.body;
+
+            const addedMusicIds = addedMusic.map((music) => music.id);
+            setMyMusic(data.music.map((item) => ({...item, isAdded: addedMusicIds.includes(item.id)})));
+            setPageCount(data.page_count);
+        } catch (error) {
+            toast.error('Error reaching the server');
+        }
+    };
 
     useEffect(() => {
-        setMyMusic(
-            dummyEditAlbumMyMusic.slice(currentPage * 5, (currentPage + 1) * 5)
-        );
-    }, [currentPage]);
+        refreshItemList();
+    }, [currentPage, addedMusic]);
 
     useEffect(() => {
-        setAddedMusic(dummyEditAlbumAddedMusic);
+        const fetchInitial = async () => {
+            try {
+                const id = pathname.split('/').pop();
+                const isPremium = search.split('=').pop();
+
+                const resp = await restClient.get(`/api/album/${id}?premium=${isPremium}`);
+                const albumData = resp.data.body.album;
+                const addedMusicIds = albumData.music_id;
+
+                console.log(albumData);
+
+                setValue('title', albumData.title);
+
+                const allMusicResp = await restClient.get(`/api/music?premium=${isPremium}`);
+                const allMusicData = allMusicResp.data.body.music;
+    
+                setAddedMusic(allMusicData.filter(({id}) => addedMusicIds.includes(id)).map((item) => ({...item, isAdded: addedMusicIds.includes(item.id)})));
+
+                setCoverImg(
+                    isPremium == 'true'
+                        ? `${config.restUrl}/static/cover/album/${id}`
+                        : `${config.phpUrl}/static/covers/album/${id}`);
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
+        };
+
+        fetchInitial();
     }, []);
 
     const handlePageClick = (event) => {
@@ -54,12 +78,33 @@ export default function EditAlbum() {
         handleSubmit,
         setError,
         clearErrors,
+        setValue,
         formState: { errors },
     } = useForm();
 
     const onSubmit = (data) => {
-        const submit = () => {
-            console.log(data);
+        const submit = async () => {
+            try {
+                const formData = new FormData();
+                
+                formData.append('title', data.title);
+                if (data.delete_cover)
+                    formData.append('delete_cover', 'true');
+                if (data.cover.length > 0)
+                    formData.append('cover', data.cover[0]);
+
+                addedMusic.forEach((music) => {
+                    formData.append('music_id[]', music.id)
+                });
+                
+                const id = pathname.split('/').pop();
+                const isPremium = search.split('=').pop();
+                await restClient.patch(`/api/album/${id}?premium=${isPremium}`, formData);
+                toast("Successfully update album")
+                navigate('/albums');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -90,20 +135,25 @@ export default function EditAlbum() {
                 });
             }
         } else {
-            setCoverImg(placeholderImg);
-            clearErrors('album_cover');
+            const isPremium = search.split('=').pop();
+            const musicId = pathname.split('/').pop();
+            setCoverImg(
+                isPremium == 'true'
+                    ? `${config.restUrl}/static/cover/album/${musicId}`
+                    : `${config.phpUrl}/static/covers/album/${musicId}`
+            );
+            clearErrors('music_cover');
         }
     };
 
-    const handleToggleAdded = (musicId) => {
-        if (dummyEditAlbumMyMusic[musicId - 1].isAdded) {
-            dummyEditAlbumMyMusic[musicId - 1].isAdded = false;
-            setAddedMusic([...addedMusic].filter(({music_id}) => musicId != music_id));
+    const handleToggleAdded = (musicId, currentlyAdded) => {
+        if (currentlyAdded) {
+            setAddedMusic([...addedMusic].filter(({id}) => musicId != id));
         } else {
-            dummyEditAlbumMyMusic[musicId - 1].isAdded = true;
-            setAddedMusic([...addedMusic, dummyEditAlbumMyMusic[musicId - 1]]);
+            const music = myMusic.filter(({id}) => id == musicId)[0];
+            music.isAdded = true;
+            setAddedMusic([...addedMusic, music]);
         }
-        setCurrentPage(currentPage);
     };
 
     useEffect(() => {
@@ -138,13 +188,13 @@ export default function EditAlbum() {
                             type='file'
                             className='file-input file-input-bordered file-input-primary w-full max-w-xs'
                             accept='image/*'
-                            {...register('album_cover', {
+                            {...register('cover', {
                                 onChange: handleChangeCover,
                             })}
                         />
                         <label className='label pb-0'>
                             <span className='label-text-alt'>
-                                {errors.album_cover?.message}
+                                {errors.cover?.message}
                             </span>
                         </label>
                     </div>
@@ -155,7 +205,7 @@ export default function EditAlbum() {
                                 <input
                                     type='checkbox'
                                     className='checkbox checkbox-primary'
-                                    {...register('remove_cover')}
+                                    {...register('delete_cover')}
                                 />
                             </label>
                         </div>
@@ -169,7 +219,7 @@ export default function EditAlbum() {
                             type='text'
                             placeholder='Enter your title'
                             className='input input-bordered w-full'
-                            {...register('album_name', {
+                            {...register('title', {
                                 required: 'Title is required',
                                 maxLength: {
                                     value: 255,
@@ -179,7 +229,7 @@ export default function EditAlbum() {
                         />
                         <label className='label pb-0'>
                             <span className='label-text-alt'>
-                                {errors.album_name?.message}
+                                {errors.title?.message}
                             </span>
                         </label>
                     </div>
@@ -198,15 +248,14 @@ export default function EditAlbum() {
                         {myMusic.length != 0 ? (
                             myMusic.map(
                                 (
-                                    { music_name, music_id, isAdded, cover },
+                                    { title, id, isAdded },
                                     idx
                                 ) => (
                                     <NewAlbumMyMusic
                                         key={idx}
-                                        musicName={music_name}
-                                        musicId={music_id}
+                                        musicName={title}
+                                        musicId={id}
                                         isAdded={isAdded}
-                                        cover={cover}
                                         onPlayMusic={() => {}}
                                         onToggleAdded={handleToggleAdded}
                                     />
@@ -221,7 +270,7 @@ export default function EditAlbum() {
                     <Pagination
                         className='self-center'
                         handlePageClick={handlePageClick}
-                        itemCount={95}
+                        itemCount={pageCount * 5}
                         pageSize={5}
                         currentPage={currentPage + 1}
                     />
@@ -232,13 +281,12 @@ export default function EditAlbum() {
                 <div className='flex flex-col gap-4'>
                     {addedMusic.length != 0 ? (
                         addedMusic.map(
-                            ({ music_name, music_id, isAdded, cover }, idx) => (
+                            ({ title, id, isAdded }, idx) => (
                                 <NewAlbumMyMusic
                                     key={idx}
-                                    musicName={music_name}
-                                    musicId={music_id}
+                                    musicName={title}
+                                    musicId={id}
                                     isAdded={isAdded}
-                                    cover={cover}
                                     onPlayMusic={() => {}}
                                     onToggleAdded={handleToggleAdded}
                                 />

@@ -3,22 +3,24 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import PendingUsersItem from '../../components/PendingUsersItem';
 import MyFollowersItem from '../../components/MyFollowersItem';
 import Pagination from '../../components/Pagination';
+import restClient from '../../utils/restClient';
+import toast from 'react-hot-toast';
 
-const dummyPendingFollowers = [];
+// const dummyPendingFollowers = [];
 
-const dummyMyFollowers = [];
+// const dummyMyFollowers = [];
 
-for (let idx = 0; idx < 100; idx++) {
-    dummyMyFollowers.push({
-        user_name: `User ${idx + 1}`,
-        user_id: idx + 1,
-    });
+// for (let idx = 0; idx < 100; idx++) {
+//     dummyMyFollowers.push({
+//         user_name: `User ${idx + 1}`,
+//         user_id: idx + 1,
+//     });
 
-    dummyPendingFollowers.push({
-        user_name: `User ${idx + 100}`,
-        user_id: idx + 100,
-    });
-}
+//     dummyPendingFollowers.push({
+//         user_name: `User ${idx + 100}`,
+//         user_id: idx + 100,
+//     });
+// }
 
 export default function Followers() {
     const [pendingUsers, setPendingUsers] = useState([]);
@@ -26,31 +28,60 @@ export default function Followers() {
     const [onModalConfirm, setOnModalConfirm] = useState(null);
 
     const [currentPendingPage, setCurrentPendingPage] = useState(0);
+    const [pendingPageCount, setPendingPageCount] = useState(0);
+
     const [currentFollowersPage, setCurrentFollowersPage] = useState(0);
+    const [followersPageCount, setFollowersPageCount] = useState(0);
+
+    const refreshPendingList = async () => {
+        try {
+            const resp = await restClient.get(
+                `/api/followers/pending?page=${currentPendingPage + 1}`
+            );
+            const data = resp.data.body;
+
+            setPendingUsers(data.followers);
+            setPendingPageCount(data.page_count);
+        } catch (error) {
+            toast.error('Error reaching the server');
+        }
+    };
+
+    const refreshCurrentList = async () => {
+        try {
+            const resp = await restClient.get(
+                `/api/followers/current?page=${currentPendingPage + 1}`
+            );
+            const data = resp.data.body;
+
+            setMyFollowers(data.followers);
+            setFollowersPageCount(data.page_count);
+        } catch (error) {
+            toast.error('Error reaching the server');
+        }
+    };
 
     useEffect(() => {
-        setPendingUsers(
-            dummyPendingFollowers.slice(
-                currentPendingPage * 5,
-                (currentPendingPage + 1) * 5
-            )
-        );
+        refreshPendingList();
     }, [currentPendingPage]);
 
     useEffect(() => {
-        setMyFollowers(
-            dummyMyFollowers.slice(
-                currentFollowersPage * 5,
-                (currentFollowersPage + 1) * 5
-            )
-        );
+        refreshCurrentList();
     }, [currentFollowersPage]);
 
     const handleAccept = (userId) => {
-        const acceptUser = () => {
-            setPendingUsers(
-                [...pendingUsers].filter(({ user_id }) => user_id != userId)
-            );
+        const acceptUser = async () => {
+            console.log(userId);
+            try {
+                await restClient.post(`/api/followers/pending/${userId}`, {
+                    action: 'accept',
+                });
+                refreshPendingList();
+                refreshCurrentList();
+                toast('Succesfully accepted follower');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -61,10 +92,17 @@ export default function Followers() {
     };
 
     const handleReject = (userId) => {
-        const rejectUser = () => {
-            setPendingUsers(
-                [...pendingUsers].filter(({ user_id }) => user_id != userId)
-            );
+        const rejectUser = async () => {
+            try {
+                await restClient.post(`/api/followers/pending/${userId}`, {
+                    action: 'reject',
+                });
+                refreshPendingList();
+                refreshCurrentList();
+                toast('Succesfully rejected follower');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -75,10 +113,17 @@ export default function Followers() {
     };
 
     const handleRemove = (userId) => {
-        const removeUser = () => {
-            setMyFollowers(
-                [...myFollowers].filter(({ user_id }) => user_id != userId)
-            );
+        const removeUser = async () => {
+            try {
+                await restClient.delete(`/api/followers/current/${userId}`, {
+                    action: 'reject',
+                });
+                refreshPendingList();
+                refreshCurrentList();
+                toast('Succesfully removed follower');
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -130,7 +175,7 @@ export default function Followers() {
                         handlePageClick={(e) => {
                             setCurrentPendingPage(e.selected);
                         }}
-                        itemCount={100}
+                        itemCount={pendingPageCount * 5}
                         pageSize={5}
                         currentPage={currentPendingPage + 1}
                     />
@@ -164,7 +209,7 @@ export default function Followers() {
                         handlePageClick={(e) => {
                             setCurrentFollowersPage(e.selected);
                         }}
-                        itemCount={100}
+                        itemCount={followersPageCount * 5}
                         pageSize={5}
                         currentPage={currentFollowersPage + 1}
                     />

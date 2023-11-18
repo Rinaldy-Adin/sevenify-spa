@@ -6,7 +6,6 @@ import {
 import AppLayout from '../pages/layouts/AppLayout';
 import Music from '../pages/Music/Music';
 import Login from '../pages/Login/Login';
-import Logout from '../pages/Login/Logout';
 import LoginLayout from '../pages/layouts/LoginLayout';
 import UnacceptedLayout from '../pages/layouts/UnacceptedLayout';
 import RequestJoin from '../pages/Join/RequestJoin';
@@ -15,7 +14,6 @@ import NewMusic from '../pages/Music/NewMusic';
 import EditMusic from '../pages/Music/EditMusic';
 import Followers from '../pages/Followers/Followers';
 import Admin from '../pages/Admin/Admin';
-import AdminLayout from '../pages/layouts/AdminLayout';
 import NewAlbum from '../pages/Albums/NewAlbum';
 import EditAlbum from '../pages/Albums/EditAlbum';
 import { AuthProvider } from '../utils/authContext';
@@ -72,8 +70,8 @@ const router = createBrowserRouter([
                 element: <Followers />,
             },
             {
-                path: '/logout',
-                element: <Logout />,
+                path: '/admin',
+                element: <Admin />,
             },
         ],
     },
@@ -102,20 +100,6 @@ const router = createBrowserRouter([
             {
                 path: '/join',
                 element: <RequestJoin />,
-            },
-        ],
-    },
-    {
-        path: '/',
-        element: (
-            <AuthProvider>
-                <AdminLayout />
-            </AuthProvider>
-        ),
-        children: [
-            {
-                path: '/admin',
-                element: <Admin />,
             },
         ],
     },

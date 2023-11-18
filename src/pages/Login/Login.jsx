@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import backgroundImage from '../../assets/background.jpg';
+import backgroundImage from '../../assets/auth-backdrop.jpg';
 import logoSquareImg from '../../assets/sevenify-square.png';
 import { useForm } from 'react-hook-form';
 import restClient from '../../utils/restClient'
@@ -59,7 +59,7 @@ const logoImageStyle = {
 };
 
 function Login() {
-    const { setIsAuthenticated } = useContext(AuthContext);
+    const { setIsAuthenticated, setIsAdmin } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const {
@@ -77,9 +77,10 @@ function Login() {
 
     const onSubmit = async (data) => {
         try {
-            await restClient.post('/api/login', data)
+            const loginResp = await restClient.post('/api/login', data)
 
             setIsAuthenticated(true);
+            setIsAdmin(loginResp.data.body.user.role == 'admin');
             navigate('/music');
         } catch (error) {
             console.log(error);

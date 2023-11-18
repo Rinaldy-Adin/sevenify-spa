@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import PendingUsersItem from '../../components/PendingUsersItem';
-import Pagination from '../../components/Pagination';
+import restClient from '../../utils/restClient';
+import toast from 'react-hot-toast';
 
 const dummyPendingUsers = [];
 
@@ -16,19 +17,30 @@ export default function Admin() {
     const [pendingUsers, setPendingUsers] = useState([]);
     const [onModalConfirm, setOnModalConfirm] = useState(null);
 
-    const [currentPage, setCurrentPage] = useState(0);
+    const refreshItemList = async () => {
+        try {
+            const resp = await restClient.get(`/api/admin/pending`);
+            const data = resp.data.body;
+
+            setPendingUsers(data.users);
+        } catch (error) {
+            toast.error('Error reaching the server');
+        }
+    };
 
     useEffect(() => {
-        setPendingUsers(
-            dummyPendingUsers.slice(currentPage * 5, (currentPage + 1) * 5)
-        );
-    }, [currentPage]);
+        refreshItemList();
+    }, []);
 
     const handleAccept = (userId) => {
-        const acceptUser = () => {
-            setPendingUsers(
-                [...pendingUsers].filter(({ user_id }) => user_id != userId)
-            );
+        const acceptUser = async () => {
+            try {
+                await restClient.post(`/api/admin/pending/${userId}`, {action: 'accept'});
+                refreshItemList();
+                toast("Succesfully rejected user");
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -39,10 +51,14 @@ export default function Admin() {
     };
 
     const handleReject = (userId) => {
-        const rejectUser = () => {
-            setPendingUsers(
-                [...pendingUsers].filter(({ user_id }) => user_id != userId)
-            );
+        const rejectUser = async () => {
+            try {
+                await restClient.post(`/api/admin/pending/${userId}`, {action: 'reject'});
+                refreshItemList();
+                toast("Succesfully rejected user");
+            } catch (error) {
+                toast.error('Error reaching the server');
+            }
         };
 
         setOnModalConfirm({
@@ -91,15 +107,6 @@ export default function Admin() {
                         </h2>
                     )}
                 </div>
-                <Pagination
-                    className='self-center'
-                    handlePageClick={(e) => {
-                        setCurrentPage(e.selected);
-                    }}
-                    itemCount={100}
-                    pageSize={5}
-                    currentPage={currentPage + 1}
-                />
             </div>
         </div>
     );

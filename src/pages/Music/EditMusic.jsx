@@ -54,11 +54,10 @@ export default function EditMusic() {
             try {
                 const formData = new FormData();
 
-                
                 formData.append('title', data.title);
                 formData.append('genre', data.genre);
                 if (data.delete_cover)
-                    formData.append('delete_cover', true);
+                    formData.append('delete_cover', 'true');
                 if (data.cover.length > 0)
                     formData.append('cover', data.cover[0]);
                 

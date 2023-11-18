@@ -1,18 +1,18 @@
 import playButtonImg from '../assets/play-button.png';
 import clsx from 'clsx';
+import config from '../utils/config';
 
 export default function NewAlbumMyMusic({
     musicName,
     musicId,
     isAdded,
-    cover,
     onPlayMusic,
     onToggleAdded,
 }) {
     const handleToggle = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        onToggleAdded(musicId);
+        onToggleAdded(musicId, isAdded);
     };
 
     const handlePlay = (e) => {
@@ -20,6 +20,8 @@ export default function NewAlbumMyMusic({
         e.stopPropagation();
         onPlayMusic(musicId);
     };
+
+    const imgsrc = `${config.restUrl}/static/cover/music/${musicId}`;
 
     return (
         <div className='w-full flex justify-between px-4 py-3 h-20'>
@@ -31,7 +33,7 @@ export default function NewAlbumMyMusic({
                     className='cursor-pointer w-8 h-8'
                 />
                 <img
-                    src={cover}
+                    src={imgsrc}
                     alt='music cover'
                     className='h-full cursor-router aspect-square rounded-lg'
                 />
